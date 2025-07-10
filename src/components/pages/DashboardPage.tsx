@@ -6,10 +6,10 @@ import {
   ScrollView,
   TouchableOpacity,
   Image,
-  SafeAreaView,
   ActivityIndicator,
   Dimensions,
 } from 'react-native';
+import SafeScreen from '../common/SafeScreen';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../../context/AuthContext';
@@ -162,7 +162,7 @@ const DashboardPage: React.FC = () => {
   const displayName = firstName || emailName || 'there';
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeScreen style={styles.container}>
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
         {/* Saludo */}
         <View style={styles.header}>
@@ -256,7 +256,7 @@ const DashboardPage: React.FC = () => {
           )}
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </SafeScreen>
   );
 };
 

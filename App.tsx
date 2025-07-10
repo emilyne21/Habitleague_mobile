@@ -1,17 +1,20 @@
 import React from 'react';
 import { StatusBar } from 'expo-status-bar';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { AuthProvider } from './src/context/AuthContext';
 import { PaymentProvider } from './src/context/PaymentContext';
 import AppNavigator from './src/navigation/AppNavigator';
 
 export default function App() {
   return (
-    <AuthProvider>
-      <PaymentProvider>
-        <StatusBar style="auto" />
-        <AppNavigator />
-      </PaymentProvider>
-    </AuthProvider>
+    <SafeAreaProvider>
+      <AuthProvider>
+        <PaymentProvider>
+          <StatusBar style="auto" />
+          <AppNavigator />
+        </PaymentProvider>
+      </AuthProvider>
+    </SafeAreaProvider>
   );
 }
 

@@ -6,9 +6,9 @@ import {
   ScrollView, 
   TouchableOpacity, 
   Image,
-  SafeAreaView,
   Dimensions
 } from 'react-native';
+import SafeScreen from '../common/SafeScreen';
 import { useAuth } from '../../context/AuthContext';
 import { Ionicons } from '@expo/vector-icons';
 import challengeService from '../../services/challenges';
@@ -177,7 +177,7 @@ const ProfilePage: React.FC = ({ navigation }: any) => {
   console.log('USER LAST NAME:', user?.lastName);
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeScreen style={styles.container}>
       <ScrollView 
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
@@ -283,7 +283,7 @@ const ProfilePage: React.FC = ({ navigation }: any) => {
           )}
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </SafeScreen>
   );
 };
 

@@ -48,13 +48,18 @@ export interface Challenge {
   rules: string;
   durationDays: number;
   entryFee: number;
+  featured: boolean;
+  participantCount: number;
   startDate: string;
   endDate: string;
+  status: 'CREATED' | 'ONGOING' | 'COMPLETED' | 'CANCELLED';
+  creatorName: string;
+  creatorEmail: string;
   createdAt: string;
   updatedAt: string;
+  // Legacy fields for backward compatibility
   participantsCount?: number;
   isJoined?: boolean;
-  status?: 'COMPLETED' | 'ONGOING' | 'PENDING';
   // Campos de ubicación para el formulario de unirse
   location?: {
     latitude: number;

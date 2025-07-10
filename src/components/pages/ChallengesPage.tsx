@@ -6,7 +6,6 @@ import {
   ScrollView,
   TouchableOpacity,
   Image,
-  SafeAreaView,
   TextInput,
   Modal,
   ActivityIndicator,
@@ -15,6 +14,7 @@ import {
   KeyboardAvoidingView,
   Platform
 } from 'react-native';
+import SafeScreen from '../common/SafeScreen';
 import { Ionicons } from '@expo/vector-icons';
 import challengeService from '../../services/challenges';
 import { Challenge } from '../../types';
@@ -231,7 +231,12 @@ const ChallengesPage: React.FC = ({ navigation }: any) => {
 
 
   const renderChallengeCard = (challenge: Challenge, isPopular: boolean = false) => (
-    <View key={challenge.id} style={[styles.challengeCard, isPopular && styles.popularChallengeCard]}>
+    <TouchableOpacity 
+      key={challenge.id} 
+      style={[styles.challengeCard, isPopular && styles.popularChallengeCard]}
+      onPress={() => navigation?.navigate('ChallengeDetails', { id: challenge.id })}
+      activeOpacity={0.8}
+    >
       <Image
         source={{ uri: challenge.imageUrl }}
         style={[styles.challengeImage, isPopular && styles.popularChallengeImage]}
@@ -245,20 +250,18 @@ const ChallengesPage: React.FC = ({ navigation }: any) => {
         </Text>
         <View style={styles.challengeMeta}>
           <Text style={styles.challengeDuration}>{challenge.durationDays} days</Text>
-          <TouchableOpacity onPress={() => handleViewParticipants(challenge)}>
+          <TouchableOpacity onPress={(e) => {
+            e.stopPropagation();
+            handleViewParticipants(challenge);
+          }}>
             <Text style={styles.participantsText}>
-              {challenge.participantsCount} {challenge.participantsCount === 1 ? 'participant' : 'participants'}
+              {challenge.participantCount || challenge.participantsCount || 0} participants
             </Text>
           </TouchableOpacity>
         </View>
-        <TouchableOpacity
-          style={styles.joinButton}
-          onPress={() => handleJoinChallenge(challenge)}
-        >
-          <Text style={styles.joinButtonText}>Join Challenge</Text>
-        </TouchableOpacity>
+        <Text style={styles.entryFeeText}>${challenge.entryFee?.toFixed(2) || '0.00'}</Text>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 
   const renderCategoryItem = (cat: any) => (
@@ -275,7 +278,7 @@ const ChallengesPage: React.FC = ({ navigation }: any) => {
   );
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeScreen style={styles.container}>
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
@@ -497,7 +500,7 @@ const ChallengesPage: React.FC = ({ navigation }: any) => {
           </View>
         </Modal>
       </KeyboardAvoidingView>
-    </SafeAreaView>
+    </SafeScreen>
   );
 };
 
@@ -605,6 +608,12 @@ const styles = StyleSheet.create({
   participantsText: {
     fontSize: 12,
     color: '#2563EB',
+  },
+  entryFeeText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#27ae60',
+    marginTop: 8,
   },
   joinButton: {
     backgroundColor: '#000000',

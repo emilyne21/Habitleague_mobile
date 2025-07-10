@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image, ScrollView, SafeAreaView, Dimensions } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image, ScrollView, Dimensions } from 'react-native';
+import SafeScreen from '../common/SafeScreen';
 import { useAuth } from '../../context/AuthContext';
 import LoginForm from '../auth/LoginForm';
 
@@ -14,7 +15,7 @@ const LoginPageAlternative = ({ navigation }: any) => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeScreen style={styles.container}>
       <ScrollView 
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
@@ -44,7 +45,7 @@ const LoginPageAlternative = ({ navigation }: any) => {
           </Text>
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </SafeScreen>
   );
 };
 

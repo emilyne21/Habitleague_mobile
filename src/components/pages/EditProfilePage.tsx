@@ -6,9 +6,9 @@ import {
   ScrollView,
   TouchableOpacity,
   TextInput,
-  SafeAreaView,
   ActivityIndicator
 } from 'react-native';
+import SafeScreen from '../common/SafeScreen';
 import { useAuth } from '../../context/AuthContext';
 import apiService from '../../services/api';
 import { API_CONFIG } from '../../config/api';
@@ -105,15 +105,15 @@ const EditProfilePage: React.FC = ({ navigation }: any) => {
 
   if (loading) {
     return (
-      <SafeAreaView style={styles.loadingContainer}>
+      <SafeScreen style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#000000" />
         <Text style={styles.loadingText}>Cargando perfil...</Text>
-      </SafeAreaView>
+      </SafeScreen>
     );
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeScreen style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
         {/* Header */}
         <View style={styles.header}>
@@ -197,7 +197,7 @@ const EditProfilePage: React.FC = ({ navigation }: any) => {
           </TouchableOpacity>
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </SafeScreen>
   );
 };
 

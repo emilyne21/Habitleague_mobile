@@ -1,7 +1,8 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image, ScrollView, SafeAreaView } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image, ScrollView } from 'react-native';
 import { useAuth } from '../../context/AuthContext';
 import LoginForm from '../auth/LoginForm';
+import SafeScreen from '../common/SafeScreen';
 
 const LoginPage = ({ navigation }: any) => {
   const { login } = useAuth();
@@ -13,7 +14,7 @@ const LoginPage = ({ navigation }: any) => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeScreen style={styles.container}>
       <ScrollView 
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
@@ -39,7 +40,7 @@ const LoginPage = ({ navigation }: any) => {
           </Text>
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </SafeScreen>
   );
 };
 

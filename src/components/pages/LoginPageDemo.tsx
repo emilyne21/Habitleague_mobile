@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import SafeScreen from '../common/SafeScreen';
 import LoginPage from './LoginPage';
 import LoginPageAlternative from './LoginPageAlternative';
 
@@ -8,7 +9,7 @@ const LoginPageDemo = ({ navigation }: any) => {
 
   if (showAlternative) {
     return (
-      <SafeAreaView style={styles.container}>
+      <SafeScreen style={styles.container}>
         <LoginPageAlternative navigation={navigation} />
         <TouchableOpacity 
           style={styles.switchButton}
@@ -16,12 +17,12 @@ const LoginPageDemo = ({ navigation }: any) => {
         >
           <Text style={styles.switchText}>Switch to Version 1</Text>
         </TouchableOpacity>
-      </SafeAreaView>
+      </SafeScreen>
     );
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeScreen style={styles.container}>
       <LoginPage navigation={navigation} />
       <TouchableOpacity 
         style={styles.switchButton}
@@ -29,7 +30,7 @@ const LoginPageDemo = ({ navigation }: any) => {
       >
         <Text style={styles.switchText}>Switch to Version 2</Text>
       </TouchableOpacity>
-    </SafeAreaView>
+    </SafeScreen>
   );
 };
 

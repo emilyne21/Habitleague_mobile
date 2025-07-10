@@ -1,16 +1,17 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import SafeScreen from '../common/SafeScreen';
 
 const ChallengeProofPage = ({ navigation }: any) => {
   return (
-    <View style={styles.container}>
+    <SafeScreen style={styles.container}>
       <Text style={styles.header}>Proof Submitted!</Text>
       <Text style={styles.sub}>You've successfully submitted proof for today's challenge. Keep up the great work!</Text>
       <Image source={{ uri: 'https://i.imgur.com/6b6psnA.png' }} style={styles.badge} />
       <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
         <Text style={styles.backButtonText}>Back to Challenge</Text>
       </TouchableOpacity>
-    </View>
+    </SafeScreen>
   );
 };
 

@@ -5,7 +5,6 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  SafeAreaView,
   TextInput,
   Modal,
   ActivityIndicator,
@@ -14,6 +13,7 @@ import {
   Platform,
   Image
 } from 'react-native';
+import SafeScreen from '../common/SafeScreen';
 import { Ionicons } from '@expo/vector-icons';
 import MapView, { Marker, Region } from 'react-native-maps';
 import { Picker } from '@react-native-picker/picker';
@@ -282,7 +282,7 @@ const CreateChallengePage: React.FC<CreateChallengePageProps> = ({ navigation })
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeScreen style={styles.container}>
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
@@ -489,7 +489,7 @@ const CreateChallengePage: React.FC<CreateChallengePageProps> = ({ navigation })
           animationType="slide"
           onRequestClose={() => setShowMapModal(false)}
         >
-          <SafeAreaView style={styles.mapModalContainer}>
+          <SafeScreen style={styles.mapModalContainer}>
             <View style={styles.mapModalHeader}>
               <TouchableOpacity onPress={() => setShowMapModal(false)}>
                 <Ionicons name="close" size={24} color="#000" />
@@ -541,7 +541,7 @@ const CreateChallengePage: React.FC<CreateChallengePageProps> = ({ navigation })
                 <Text style={styles.mapSelectedLocationText}>{selectedLocation.locationName}</Text>
               </View>
             )}
-          </SafeAreaView>
+          </SafeScreen>
         </Modal>
 
         {/* Native Date Pickers */}
@@ -575,7 +575,7 @@ const CreateChallengePage: React.FC<CreateChallengePageProps> = ({ navigation })
           />
         )}
       </KeyboardAvoidingView>
-    </SafeAreaView>
+    </SafeScreen>
   );
 };
 

@@ -19,6 +19,7 @@ import ChallengeDetailsPage from '../components/pages/ChallengeDetailsPage';
 import ChallengeProofPage from '../components/pages/ChallengeProofPage';
 import SubmitEvidencePage from '../components/pages/SubmitEvidencePage';
 import PaymentsPage from '../components/pages/PaymentsPage';
+import JoinChallengePage from '../components/pages/JoinChallengePage';
 import PaymentForm from '../components/payments/PaymentForm';
 import PaymentStatus from '../components/payments/PaymentStatus';
 
@@ -102,6 +103,7 @@ const AppNavigator = () => {
             <Stack.Screen name="CreateChallenge" component={CreateChallengePage} />
             <Stack.Screen name="EditProfile" component={EditProfilePage} />
             <Stack.Screen name="ChallengeDetails" component={ChallengeDetailsPage} />
+            <Stack.Screen name="JoinChallenge" component={JoinChallengePage} />
             <Stack.Screen name="SubmitEvidence" component={SubmitEvidencePage} />
             <Stack.Screen name="ChallengeProof" component={ChallengeProofPage} />
             <Stack.Screen name="PaymentStatus" component={PaymentStatus} />

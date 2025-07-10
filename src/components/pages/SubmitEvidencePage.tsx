@@ -7,11 +7,11 @@ import {
   TouchableOpacity,
   Image,
   TextInput,
-  SafeAreaView,
   ActivityIndicator,
   Alert,
   Dimensions,
 } from 'react-native';
+import SafeScreen from '../common/SafeScreen';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
@@ -307,19 +307,19 @@ const SubmitEvidencePage: React.FC = () => {
 
   if (loading) {
     return (
-      <SafeAreaView style={styles.container}>
+      <SafeScreen style={styles.container}>
         <View style={styles.centerContainer}>
-          <ActivityIndicator size="large" color="#000" />
-          <Text style={styles.loadingText}>Loading challenge data...</Text>
+          <ActivityIndicator size="large" color="#007AFF" />
+          <Text style={styles.loadingText}>Loading your challenges...</Text>
         </View>
-      </SafeAreaView>
+      </SafeScreen>
     );
   }
 
   // Si no hay challengeId y no hay challenge seleccionado, mostrar selección de challenges
   if (!challengeId && !challenge) {
     return (
-      <SafeAreaView style={styles.container}>
+      <SafeScreen style={styles.container}>
         <ScrollView style={styles.scrollView}>
           {/* Header */}
           <View style={styles.header}>
@@ -386,26 +386,26 @@ const SubmitEvidencePage: React.FC = () => {
             )}
           </View>
         </ScrollView>
-      </SafeAreaView>
+      </SafeScreen>
     );
   }
 
   if (!challenge) {
     return (
-      <SafeAreaView style={styles.container}>
+      <SafeScreen style={styles.container}>
         <View style={styles.centerContainer}>
           <Text style={styles.errorText}>Challenge not found</Text>
           <TouchableOpacity style={styles.primaryButton} onPress={handleBack}>
             <Text style={styles.primaryButtonText}>Go Back</Text>
           </TouchableOpacity>
         </View>
-      </SafeAreaView>
+      </SafeScreen>
     );
   }
 
   if (dailyStatus?.hasSubmittedToday) {
     return (
-      <SafeAreaView style={styles.container}>
+      <SafeScreen style={styles.container}>
         <View style={styles.centerContainer}>
           <View style={styles.successCard}>
             <View style={styles.successIconContainer}>
@@ -428,12 +428,12 @@ const SubmitEvidencePage: React.FC = () => {
             </View>
           </View>
         </View>
-      </SafeAreaView>
+      </SafeScreen>
     );
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeScreen style={styles.container}>
       <ScrollView style={styles.scrollView}>
         {/* Header */}
         <View style={styles.header}>
@@ -589,7 +589,7 @@ const SubmitEvidencePage: React.FC = () => {
           </View>
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </SafeScreen>
   );
 };
 

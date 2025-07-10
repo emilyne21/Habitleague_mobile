@@ -36,6 +36,7 @@ interface RegisterFormProps {
   formData: RegisterFormData;
   setFormData: React.Dispatch<React.SetStateAction<RegisterFormData>>;
   onStepChange: (step: 1 | 2) => void;
+  onRegistrationSuccess?: () => void;
 }
 
 /* ---------- Componente ---------- */
@@ -44,6 +45,7 @@ const RegisterFormMultiStep: React.FC<RegisterFormProps> = ({
   formData,
   setFormData,
   onStepChange,
+  onRegistrationSuccess,
 }) => {
   const { register, logout } = useAuth();
   const [error, setError] = useState('');
@@ -110,6 +112,8 @@ const RegisterFormMultiStep: React.FC<RegisterFormProps> = ({
 
       await register(payload);
       // El logout se maneja automáticamente en el contexto después del registro exitoso
+      // Llamar al callback para navegar a la página de login
+      onRegistrationSuccess?.();
     } catch (e: any) {
       setError(e.message || 'Registration failed');
     } finally {

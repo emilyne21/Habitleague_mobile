@@ -5,9 +5,9 @@ import {
   ScrollView, 
   TouchableOpacity, 
   ActivityIndicator, 
-  SafeAreaView,
   StyleSheet 
 } from 'react-native';
+import SafeScreen from '../common/SafeScreen';
 import { useNavigation } from '@react-navigation/native';
 import { usePaymentContext } from '../../context/PaymentContext';
 import { PaymentStatus } from '../../types';
@@ -115,7 +115,7 @@ const PaymentsPage: React.FC = () => {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeScreen style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.title}>My Payments</Text>
@@ -262,7 +262,7 @@ const PaymentsPage: React.FC = () => {
           </View>
         )}
       </ScrollView>
-    </SafeAreaView>
+    </SafeScreen>
   );
 };
 

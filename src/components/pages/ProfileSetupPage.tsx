@@ -3,6 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator,
 import * as ImagePicker from 'expo-image-picker';
 import { useAuth } from '../../context/AuthContext';
 import ScrollContainer from '../common/ScrollContainer';
+import SafeScreen from '../common/SafeScreen';
 
 const AVATARS = [
   { id: 'MALE', label: 'Male', uri: 'https://i.pinimg.com/736x/e1/e7/3b/e1e73b7c4ede29974e3844d99602feb0.jpg' },
@@ -68,7 +69,8 @@ const ProfileSetupPage = ({ route, navigation }: any) => {
   };
 
   return (
-    <ScrollContainer contentContainerStyle={{ ...styles.container, paddingBottom: 48 }}>
+    <SafeScreen style={styles.wrapper}>
+      <ScrollContainer contentContainerStyle={{ ...styles.container, paddingBottom: 48 }}>
       <Text style={styles.title}>Sign Up</Text>
       <View style={styles.progressContainer}>
         <View style={[styles.dot, styles.dotInactive]} />
@@ -133,11 +135,13 @@ const ProfileSetupPage = ({ route, navigation }: any) => {
       <TouchableOpacity style={styles.button} onPress={handleRegister} disabled={loading}>
         {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>Create Account</Text>}
       </TouchableOpacity>
-    </ScrollContainer>
+      </ScrollContainer>
+    </SafeScreen>
   );
 };
 
 const styles = StyleSheet.create({
+  wrapper: { flex: 1, backgroundColor: '#fff' },
   container: { flexGrow: 1, backgroundColor: '#fff', padding: 24 },
   title: { fontSize: 20, fontWeight: 'bold', textAlign: 'center', marginTop: 32, marginBottom: 8 },
   progressContainer: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginBottom: 16 },

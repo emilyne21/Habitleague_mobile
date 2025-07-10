@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import RegisterFormMultiStep from '../auth/RegisterFormMultiStep';
 import { RegisterFormData } from '../auth/RegisterFormMultiStep';
+import SafeScreen from '../common/SafeScreen';
 
 const SignUpPage = ({ navigation }: any) => {
   const [step, setStep] = useState<1 | 2>(1);
@@ -20,8 +21,13 @@ const SignUpPage = ({ navigation }: any) => {
     setStep(newStep);
   };
 
+  const handleRegistrationSuccess = () => {
+    // Navegar a la página de login después del registro exitoso
+    navigation.navigate('Login');
+  };
+
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeScreen style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity 
@@ -55,8 +61,9 @@ const SignUpPage = ({ navigation }: any) => {
         formData={formData}
         setFormData={setFormData}
         onStepChange={handleStepChange}
+        onRegistrationSuccess={handleRegistrationSuccess}
       />
-    </SafeAreaView>
+    </SafeScreen>
   );
 };
 
