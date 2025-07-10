@@ -16,9 +16,13 @@ export const API_CONFIG = {
     MY_CHALLENGES: '/api/challenges/my-challenges',
     ACHIEVEMENTS: '/api/achievements',
     MY_ACHIEVEMENTS: '/api/achievements/my-achievements',
+    MY_ACHIEVEMENT_STATS: '/api/achievements/my-stats',
     MY_PAYMENTS: '/api/payments/my-payments',
     PROCESS_PAYMENT: '/api/payments/process',
     PAYMENT_STATUS: '/api/payments/challenge',
+    MY_EVIDENCES: '/api/evidences/my-evidences',
+    CHALLENGE_EVIDENCES: '/api/evidences/challenge',
+    EVIDENCE_STATS: '/api/evidences/my-stats',
   },
 };
 

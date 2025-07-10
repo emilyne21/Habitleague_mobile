@@ -327,4 +327,79 @@ export interface MapProps {
   markers?: MapLocation[];
   onLocationSelect?: (location: MapLocation) => void;
   style?: any;
+}
+
+// Evidence interfaces
+export interface Evidence {
+  id: number;
+  imageUrl: string;
+  aiValidated: boolean;
+  latitude: number;
+  longitude: number;
+  locationValid: boolean;
+  submittedAt: string;
+  challengeId: number;
+  challengeName: string;
+}
+
+export interface EvidenceStats {
+  interpretation: {
+    location: string;
+    overall: string;
+    ai: string;
+  };
+  statistics: {
+    totalEvidences: number;
+    aiValidated: number;
+    successRates: {
+      location: number;
+      overall: number;
+      ai: number;
+    };
+    locationValid: number;
+    bothValid: number;
+  };
+  userId: number;
+  userName: string;
+}
+
+// Achievement types based on API documentation
+export interface Achievement {
+  id: number;
+  type: AchievementType;
+  name: string;
+  description: string;
+  iconUrl?: string;
+  isActive: boolean;
+  createdAt: string;
+}
+
+export enum AchievementType {
+  FIRST_CHALLENGE_COMPLETED = 'FIRST_CHALLENGE_COMPLETED',
+  SEVEN_DAY_STREAK = 'SEVEN_DAY_STREAK',
+  PERFECT_CHALLENGE = 'PERFECT_CHALLENGE',
+  FIRST_PENALTY_PAYMENT = 'FIRST_PENALTY_PAYMENT'
+}
+
+export interface UserAchievement {
+  id: number;
+  userId: number;
+  achievement: Achievement;
+  unlockedAt: string;
+  challengeId?: number;
+  contextInfo?: string;
+  // Additional fields for UI
+  isUnlocked: boolean;
+  progress?: number;
+  maxProgress?: number;
+  points?: number;
+}
+
+export interface AchievementStats {
+  userId: number;
+  totalAchievements: number;
+  unlockedAchievements: number;
+  completionPercentage: number;
+  lastUnlockedAt?: string;
+  recentAchievements: UserAchievement[];
 } 

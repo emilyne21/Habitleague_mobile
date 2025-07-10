@@ -174,26 +174,6 @@ const DashboardPage: React.FC = () => {
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>My Challenges</Text>
-            <View style={styles.debugButtons}>
-              <TouchableOpacity 
-                onPress={forceRefresh}
-                style={[styles.debugButton, { backgroundColor: '#059669' }]}
-              >
-                <Text style={styles.debugButtonText}>🚀 Force Refresh</Text>
-              </TouchableOpacity>
-              <TouchableOpacity 
-                onPress={fetchMyChallenges}
-                style={styles.debugButton}
-              >
-                <Text style={styles.debugButtonText}>🔄 Refresh</Text>
-              </TouchableOpacity>
-              <TouchableOpacity 
-                onPress={testEndpoints}
-                style={[styles.debugButton, { backgroundColor: '#dc2626', marginLeft: 8 }]}
-              >
-                <Text style={styles.debugButtonText}>🧪 Test</Text>
-              </TouchableOpacity>
-            </View>
           </View>
 
           {loading && (

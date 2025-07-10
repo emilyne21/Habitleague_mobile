@@ -19,6 +19,7 @@ import ChallengeDetailsPage from '../components/pages/ChallengeDetailsPage';
 import ChallengeProofPage from '../components/pages/ChallengeProofPage';
 import SubmitEvidencePage from '../components/pages/SubmitEvidencePage';
 import PaymentsPage from '../components/pages/PaymentsPage';
+import EvidencesPage from '../components/pages/EvidencesPage';
 import JoinChallengePage from '../components/pages/JoinChallengePage';
 import PaymentForm from '../components/payments/PaymentForm';
 import PaymentStatus from '../components/payments/PaymentStatus';
@@ -54,6 +55,8 @@ const MainTabs = () => (
           iconName = focused ? 'trophy' : 'trophy-outline';
         } else if (route.name === 'Payment') {
           iconName = focused ? 'wallet' : 'wallet-outline';
+        } else if (route.name === 'Evidences') {
+          iconName = focused ? 'images' : 'images-outline';
         } else if (route.name === 'Profile') {
           iconName = focused ? 'person' : 'person-outline';
         } else {
@@ -79,6 +82,7 @@ const MainTabs = () => (
     <Tab.Screen name="Home" component={DashboardPage} />
     <Tab.Screen name="Challenges" component={ChallengesPage} />
     <Tab.Screen name="Payment" component={PaymentsPage} />
+    <Tab.Screen name="Evidences" component={EvidencesPage} />
     <Tab.Screen name="Profile" component={ProfilePage} />
   </Tab.Navigator>
 );

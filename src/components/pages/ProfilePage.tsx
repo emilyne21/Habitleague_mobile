@@ -12,8 +12,8 @@ import SafeScreen from '../common/SafeScreen';
 import { useAuth } from '../../context/AuthContext';
 import { Ionicons } from '@expo/vector-icons';
 import challengeService from '../../services/challenges';
-import { Challenge } from '../../types';
-import achievementService, { UserAchievement } from '../../services/achievements';
+import { Challenge, UserAchievement } from '../../types';
+import achievementService from '../../services/achievements';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { jwtDecode } from 'jwt-decode';
 
@@ -80,10 +80,12 @@ const ProfilePage: React.FC = ({ navigation }: any) => {
     setAchievementsError(null);
 
     try {
-      const achievements = await achievementService.getMyAchievements();
+      // Usar la nueva función que combina achievements desbloqueados y disponibles
+      const achievements = await achievementService.getAchievementsForProfile();
       setMyAchievements(achievements);
     } catch (err: any) {
       setAchievementsError(err.message || 'Error loading your achievements');
+      console.error('Error loading achievements:', err);
     } finally {
       setAchievementsLoading(false);
     }
@@ -119,7 +121,7 @@ const ProfilePage: React.FC = ({ navigation }: any) => {
 
   const renderAchievementCard = (achievement: UserAchievement) => (
     <View
-      key={achievement.id}
+      key={achievement.id || achievement.achievement.id}
       style={[
         styles.achievementCard,
         achievement.isUnlocked ? styles.achievementUnlocked : styles.achievementLocked
@@ -138,16 +140,21 @@ const ProfilePage: React.FC = ({ navigation }: any) => {
           styles.achievementName,
           achievement.isUnlocked ? styles.achievementNameUnlocked : styles.achievementNameLocked
         ]}>
-          {achievement.name}
+          {achievement.achievement.name}
         </Text>
         <Text style={[
           styles.achievementDescription,
           achievement.isUnlocked ? styles.achievementDescriptionUnlocked : styles.achievementDescriptionLocked
         ]}>
-          {achievement.description}
+          {achievement.achievement.description}
         </Text>
         {achievement.isUnlocked && achievement.points && (
           <Text style={styles.achievementPoints}>+{achievement.points} points</Text>
+        )}
+        {achievement.isUnlocked && achievement.unlockedAt && (
+          <Text style={styles.achievementDate}>
+            Desbloqueado: {new Date(achievement.unlockedAt).toLocaleDateString()}
+          </Text>
         )}
         {!achievement.isUnlocked && achievement.progress !== undefined && (
           <View style={styles.progressContainer}>
@@ -502,6 +509,12 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#059669',
     fontWeight: '500',
+  },
+  achievementDate: {
+    fontSize: 11,
+    color: '#6B7280',
+    marginTop: 2,
+    fontStyle: 'italic',
   },
   progressContainer: {
     marginTop: 8,

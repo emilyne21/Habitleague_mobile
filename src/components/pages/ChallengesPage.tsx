@@ -25,6 +25,7 @@ const { width } = Dimensions.get('window');
 
 // Categories with images
 const categories = [
+  { key: 'ALL', label: 'All', img: null },
   { key: ChallengeCategory.MINDFULNESS, label: 'Mindfulness', img: require('../../../assets/mind.jpg') },
   { key: ChallengeCategory.FITNESS, label: 'Fitness', img: require('../../../assets/fit.jpg') },
   { key: ChallengeCategory.PRODUCTIVITY, label: 'Productivity', img: require('../../../assets/productive.jpg') },
@@ -39,8 +40,9 @@ const categories = [
 ];
 
 const ChallengesPage: React.FC = ({ navigation }: any) => {
-  const [selectedCat, setSelectedCat] = useState<string | null>(null);
+  const [selectedCat, setSelectedCat] = useState<string>('ALL');
   const [challenges, setChallenges] = useState<Challenge[]>([]);
+  const [allChallenges, setAllChallenges] = useState<Challenge[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -70,20 +72,21 @@ const ChallengesPage: React.FC = ({ navigation }: any) => {
   const [participantsLoading, setParticipantsLoading] = useState(false);
   const [participantsError, setParticipantsError] = useState<string | null>(null);
 
-
-
-  // Fetch popular challenges on mount
+  // Fetch popular challenges and all challenges on mount
   useEffect(() => {
     fetchPopularChallenges();
+    fetchAllChallenges();
   }, []);
 
-  // Fetch challenges by category
+  // Filter challenges when category changes
   useEffect(() => {
-    if (!selectedCat) return;
-    fetchByCategory();
-  }, [selectedCat]);
-
-
+    if (selectedCat === 'ALL') {
+      setChallenges(allChallenges);
+    } else {
+      const filtered = allChallenges.filter(challenge => challenge.category === selectedCat);
+      setChallenges(filtered);
+    }
+  }, [selectedCat, allChallenges]);
 
   const fetchPopularChallenges = async () => {
     setPopularLoading(true);
@@ -98,11 +101,13 @@ const ChallengesPage: React.FC = ({ navigation }: any) => {
     }
   };
 
-  const fetchByCategory = async () => {
+  const fetchAllChallenges = async () => {
     setLoading(true);
     setError(null);
     try {
-      const data = await challengeService.getChallengesByCategory(selectedCat!);
+      // Fetch all challenges - you might need to create this method in challengeService
+      const data = await challengeService.getAllChallenges();
+      setAllChallenges(data);
       setChallenges(data);
     } catch (err: any) {
       setError(err.message || 'Error loading challenges');
@@ -204,10 +209,7 @@ const ChallengesPage: React.FC = ({ navigation }: any) => {
       });
 
       // Refresh challenges list
-      if (selectedCat) {
-        const updated = await challengeService.getChallengesByCategory(selectedCat);
-        setChallenges(updated);
-      }
+      await fetchAllChallenges();
 
       // Navigate to Dashboard to see the new challenge
       navigation?.navigate('Home');
@@ -227,8 +229,6 @@ const ChallengesPage: React.FC = ({ navigation }: any) => {
       setJoinFormLoading(false);
     }
   };
-
-
 
   const renderChallengeCard = (challenge: Challenge, isPopular: boolean = false) => (
     <TouchableOpacity 
@@ -264,14 +264,13 @@ const ChallengesPage: React.FC = ({ navigation }: any) => {
     </TouchableOpacity>
   );
 
-  const renderCategoryItem = (cat: any) => (
+  const renderCategoryPill = (cat: any) => (
     <TouchableOpacity
       key={cat.key}
-      style={[styles.categoryItem, selectedCat === cat.key && styles.categoryItemSelected]}
+      style={[styles.categoryPill, selectedCat === cat.key && styles.categoryPillSelected]}
       onPress={() => setSelectedCat(cat.key)}
     >
-      <Image source={cat.img} style={styles.categoryImage} />
-      <Text style={[styles.categoryLabel, selectedCat === cat.key && styles.categoryLabelSelected]}>
+      <Text style={[styles.categoryPillText, selectedCat === cat.key && styles.categoryPillTextSelected]}>
         {cat.label}
       </Text>
     </TouchableOpacity>
@@ -284,7 +283,10 @@ const ChallengesPage: React.FC = ({ navigation }: any) => {
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         keyboardVerticalOffset={Platform.OS === 'ios' ? 24 : 0}
       >
-        <ScrollView contentContainerStyle={styles.scrollContent}>
+        <ScrollView 
+          contentContainerStyle={[styles.scrollContent, { paddingBottom: 120 }]}
+          showsVerticalScrollIndicator={false}
+        >
           {/* Popular Challenges */}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Popular Challenges</Text>
@@ -315,50 +317,58 @@ const ChallengesPage: React.FC = ({ navigation }: any) => {
             )}
           </View>
 
-          {/* Categories */}
+          {/* Categories Pills */}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Categories</Text>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoriesScroll}>
-              {categories.map(renderCategoryItem)}
-            </ScrollView>
-
-            <TouchableOpacity
-              style={styles.createButton}
-              onPress={() => navigation?.navigate('CreateChallenge')}
+            <ScrollView 
+              horizontal 
+              showsHorizontalScrollIndicator={false} 
+              style={styles.categoriesPillsScroll}
+              contentContainerStyle={styles.categoriesPillsContainer}
             >
-              <Text style={styles.createButtonText}>Create a Challenge</Text>
-            </TouchableOpacity>
+              {categories.map(renderCategoryPill)}
+            </ScrollView>
           </View>
 
+          {/* All Challenges / Filtered Challenges */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>
+              {selectedCat === 'ALL' ? 'All Challenges' : `${categories.find(c => c.key === selectedCat)?.label} Challenges`}
+            </Text>
 
+            {loading && (
+              <View style={styles.loadingContainer}>
+                <ActivityIndicator size="large" color="#000000" />
+                <Text style={styles.loadingText}>Loading challenges...</Text>
+              </View>
+            )}
+            
+            {error && <Text style={styles.errorText}>{error}</Text>}
 
-          {/* Category Results */}
-          {selectedCat && (
-            <View style={styles.section}>
-              <Text style={styles.sectionTitle}>
-                {categories.find(c => c.key === selectedCat)?.label} Challenges
-              </Text>
-
-              {loading && (
-                <View style={styles.loadingContainer}>
-                  <ActivityIndicator size="large" color="#000000" />
-                  <Text style={styles.loadingText}>Loading...</Text>
-                </View>
-              )}
-              
-              {error && <Text style={styles.errorText}>{error}</Text>}
-
-              {!loading && !error && (
-                <View style={styles.challengesGrid}>
-                  {challenges.length > 0
-                    ? challenges.map(challenge => renderChallengeCard(challenge))
-                    : <Text style={styles.emptyText}>No challenges found in this category.</Text>
-                  }
-                </View>
-              )}
-            </View>
-          )}
+            {!loading && !error && (
+              <View style={styles.challengesGrid}>
+                {challenges.length > 0
+                  ? challenges.map(challenge => renderChallengeCard(challenge))
+                  : <Text style={styles.emptyText}>
+                      {selectedCat === 'ALL' 
+                        ? 'No challenges available.' 
+                        : 'No challenges found in this category.'
+                      }
+                    </Text>
+                }
+              </View>
+            )}
+          </View>
         </ScrollView>
+
+        {/* Floating Create Challenge Button */}
+        <TouchableOpacity
+          style={styles.floatingCreateButton}
+          onPress={() => navigation?.navigate('CreateChallenge')}
+          activeOpacity={0.8}
+        >
+          <Ionicons name="add" size={28} color="#FFFFFF" />
+        </TouchableOpacity>
 
         {/* Join Challenge Modal */}
         <Modal
@@ -629,49 +639,6 @@ const styles = StyleSheet.create({
   categoriesScroll: {
     marginBottom: 16,
   },
-  categoryItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#FFFFFF',
-    padding: 12,
-    borderRadius: 12,
-    marginRight: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-    elevation: 1,
-  },
-  categoryItemSelected: {
-    borderWidth: 2,
-    borderColor: '#000000',
-  },
-  categoryImage: {
-    width: 64,
-    height: 64,
-    borderRadius: 8,
-    marginRight: 12,
-  },
-  categoryLabel: {
-    fontSize: 16,
-    fontWeight: '500',
-    color: '#374151',
-  },
-  categoryLabelSelected: {
-    color: '#000000',
-  },
-  createButton: {
-    backgroundColor: '#000000',
-    borderRadius: 12,
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    alignItems: 'center',
-  },
-  createButtonText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: '500',
-  },
   input: {
     borderWidth: 1,
     borderColor: '#D1D5DB',
@@ -797,6 +764,49 @@ const styles = StyleSheet.create({
   participantDate: {
     fontSize: 11,
     color: '#9CA3AF',
+  },
+  categoryPill: {
+    backgroundColor: '#E5E7EB',
+    borderRadius: 20,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    marginRight: 10,
+    borderWidth: 1,
+    borderColor: '#D1D5DB',
+  },
+  categoryPillSelected: {
+    backgroundColor: '#000000',
+    borderColor: '#000000',
+  },
+  categoryPillText: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#374151',
+  },
+  categoryPillTextSelected: {
+    color: '#FFFFFF',
+  },
+  categoriesPillsScroll: {
+    marginBottom: 16,
+  },
+  categoriesPillsContainer: {
+    paddingHorizontal: 5,
+  },
+  floatingCreateButton: {
+    position: 'absolute',
+    bottom: 30,
+    right: 20,
+    backgroundColor: '#000000',
+    borderRadius: 30,
+    width: 60,
+    height: 60,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 6,
+    elevation: 8,
   },
 
 });
