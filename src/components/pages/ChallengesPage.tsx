@@ -49,27 +49,7 @@ const ChallengesPage: React.FC = ({ navigation }: any) => {
   const [popularLoading, setPopularLoading] = useState(false);
   const [popularError, setPopularError] = useState<string | null>(null);
 
-  // Create challenge form
-  const [showForm, setShowForm] = useState(false);
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
-  const [category, setCategory] = useState<ChallengeCategory | undefined>(undefined);
-  const [imageUrl, setImageUrl] = useState('');
-  const [rules, setRules] = useState('');
-  const [entryFee, setEntryFee] = useState<string>('');
-  const [duration, setDuration] = useState<number>(21);
-  const [startDate, setStartDate] = useState<string>('');
-  const [endDate, setEndDate] = useState<string>('');
-  const [location, setLocation] = useState<string>('');
-  const [latitude, setLatitude] = useState<string>('');
-  const [longitude, setLongitude] = useState<string>('');
-  const [toleranceRadius, setToleranceRadius] = useState<string>('');
-  const [currency, setCurrency] = useState<string>('USD');
-  const [paymentMethodId, setPaymentMethodId] = useState<string>('');
-  const [cardLast4, setCardLast4] = useState<string>('');
-  const [cardBrand, setCardBrand] = useState<string>('');
-  const [formError, setFormError] = useState<string | null>(null);
-  const [formLoading, setFormLoading] = useState(false);
+
 
   // Join challenge modal
   const [showJoinModal, setShowJoinModal] = useState(false);
@@ -90,9 +70,7 @@ const ChallengesPage: React.FC = ({ navigation }: any) => {
   const [participantsLoading, setParticipantsLoading] = useState(false);
   const [participantsError, setParticipantsError] = useState<string | null>(null);
 
-  // New selectors
-  const [showStartDatePicker, setShowStartDatePicker] = useState(false);
-  const [showEndDatePicker, setShowEndDatePicker] = useState(false);
+
 
   // Fetch popular challenges on mount
   useEffect(() => {
@@ -105,17 +83,7 @@ const ChallengesPage: React.FC = ({ navigation }: any) => {
     fetchByCategory();
   }, [selectedCat]);
 
-  // Calculate duration automatically when dates change
-  useEffect(() => {
-    if (startDate && endDate) {
-      const startDateObj = new Date(startDate);
-      const endDateObj = new Date(endDate);
-      const daysDiff = Math.ceil((endDateObj.getTime() - startDateObj.getTime()) / (1000 * 60 * 60 * 24));
-      if (daysDiff > 0) {
-        setDuration(daysDiff);
-      }
-    }
-  }, [startDate, endDate]);
+
 
   const fetchPopularChallenges = async () => {
     setPopularLoading(true);
@@ -260,145 +228,7 @@ const ChallengesPage: React.FC = ({ navigation }: any) => {
     }
   };
 
-  const handleCreate = async () => {
-    setFormError(null);
 
-    // Basic validations
-    if (!name.trim()) {
-      setFormError('Challenge name is required');
-      return;
-    }
-    if (!description.trim()) {
-      setFormError('Description is required');
-      return;
-    }
-    if (!imageUrl.trim()) {
-      setFormError('Image URL is required');
-      return;
-    }
-    if (!startDate) {
-      setFormError('Start date is required');
-      return;
-    }
-    if (!endDate) {
-      setFormError('End date is required');
-      return;
-    }
-    if (!location.trim()) {
-      setFormError('Location name is required');
-      return;
-    }
-    if (!latitude.trim()) {
-      setFormError('Latitude is required');
-      return;
-    }
-    if (!longitude.trim()) {
-      setFormError('Longitude is required');
-      return;
-    }
-    if (!toleranceRadius.trim()) {
-      setFormError('Tolerance radius is required');
-      return;
-    }
-    if (!rules.trim()) {
-      setFormError('Rules are required');
-      return;
-    }
-    if (duration < 21 || duration > 30) {
-      setFormError('Duration must be between 21 and 30 days');
-      return;
-    }
-    if (!entryFee.trim()) {
-      setFormError('Entry fee is required');
-      return;
-    }
-    if (!paymentMethodId.trim()) {
-      setFormError('Payment method ID is required');
-      return;
-    }
-    if (!cardLast4.trim() || cardLast4.length !== 4) {
-      setFormError('Please enter the last 4 digits of your card');
-      return;
-    }
-    if (!cardBrand.trim()) {
-      setFormError('Please select a card brand');
-      return;
-    }
-    if (!currency.trim()) {
-      setFormError('Currency is required');
-      return;
-    }
-
-    setFormLoading(true);
-    try {
-      const locationData = {
-        challengeId: null,
-        latitude: parseFloat(latitude),
-        longitude: parseFloat(longitude),
-        locationName: location.trim(),
-        toleranceRadius: parseFloat(toleranceRadius)
-      };
-
-      const paymentData = {
-        challengeId: null,
-        amount: parseFloat(entryFee),
-        currency: currency.trim(),
-        paymentMethodId: paymentMethodId.trim(),
-        cardLast4: cardLast4.trim(),
-        cardBrand: cardBrand.trim()
-      };
-
-      const payload = {
-        name: name.trim(),
-        description: description.trim(),
-        category: category!,
-        imageUrl: imageUrl.trim(),
-        rules: rules.trim(),
-        durationDays: duration,
-        entryFee: parseFloat(entryFee),
-        startDate,
-        endDate,
-        payment: paymentData,
-        location: locationData
-      };
-
-      console.log('Sending payload to backend:', JSON.stringify(payload, null, 2));
-      await challengeService.createChallenge(payload);
-
-      Alert.alert('Success', 'Challenge created successfully!');
-
-      // Reset form
-      setName('');
-      setDescription('');
-      setCategory(undefined);
-      setImageUrl('');
-
-      setRules('');
-      setEntryFee('');
-      setDuration(21);
-      setStartDate('');
-      setEndDate('');
-      setLocation('');
-      setLatitude('');
-      setLongitude('');
-      setToleranceRadius('');
-      setCurrency('USD');
-      setPaymentMethodId('');
-      setCardLast4('');
-      setCardBrand('');
-      setShowForm(false);
-
-      // Refresh challenges list
-      if (selectedCat === category) {
-        const updated = await challengeService.getChallengesByCategory(category);
-        setChallenges(updated);
-      }
-    } catch (err: any) {
-      setFormError(err.message || 'Error creating challenge');
-    } finally {
-      setFormLoading(false);
-    }
-  };
 
   const renderChallengeCard = (challenge: Challenge, isPopular: boolean = false) => (
     <View key={challenge.id} style={[styles.challengeCard, isPopular && styles.popularChallengeCard]}>
@@ -491,268 +321,13 @@ const ChallengesPage: React.FC = ({ navigation }: any) => {
 
             <TouchableOpacity
               style={styles.createButton}
-              onPress={() => setShowForm(!showForm)}
+              onPress={() => navigation?.navigate('CreateChallenge')}
             >
               <Text style={styles.createButtonText}>Create a Challenge</Text>
             </TouchableOpacity>
           </View>
 
-          {/* Create Challenge Form */}
-          {showForm && (
-            <View style={styles.formContainer}>
-              <Text style={styles.formTitle}>Create your own</Text>
-              <ScrollView style={styles.formScroll} contentContainerStyle={{ paddingBottom: 48 }} keyboardShouldPersistTaps="handled">
-                <TextInput
-                  style={styles.input}
-                  placeholder="Challenge Name"
-                  value={name}
-                  onChangeText={setName}
-                />
-                
-                <TextInput
-                  style={[styles.input, styles.textArea]}
-                  placeholder="Description"
-                  value={description}
-                  onChangeText={setDescription}
-                  multiline
-                  numberOfLines={4}
-                />
-                
-                <TextInput
-                  style={styles.input}
-                  placeholder="Image URL"
-                  value={imageUrl}
-                  onChangeText={setImageUrl}
-                />
-                
-                <TextInput
-                  style={styles.input}
-                  placeholder="Rules"
-                  value={rules}
-                  onChangeText={setRules}
-                  multiline
-                  numberOfLines={4}
-                />
-                
-                <View style={{ marginBottom: 12 }}>
-                  <Picker
-                    selectedValue={category}
-                    onValueChange={(itemValue: ChallengeCategory | undefined) => setCategory(itemValue)}
-                    style={{ backgroundColor: '#F9FAFB', borderRadius: 8 }}
-                  >
-                    <Picker.Item label="Selecciona una categoría..." value={undefined} />
-                    {Object.values(ChallengeCategory).map((cat) => (
-                      <Picker.Item key={cat} label={cat.charAt(0) + cat.slice(1).toLowerCase()} value={cat} />
-                    ))}
-                  </Picker>
-                </View>
-                
-                <TextInput
-                  style={styles.input}
-                  placeholder="Entry Fee"
-                  value={entryFee}
-                  onChangeText={setEntryFee}
-                  keyboardType="numeric"
-                />
-                
-                <TextInput
-                  style={styles.input}
-                  placeholder="Location Name"
-                  value={location}
-                  onChangeText={setLocation}
-                />
-                
-                <View style={styles.row}>
-                  <TextInput
-                    style={[styles.input, styles.halfInput]}
-                    placeholder="Latitude"
-                    value={latitude}
-                    onChangeText={setLatitude}
-                    keyboardType="numeric"
-                  />
-                  <TextInput
-                    style={[styles.input, styles.halfInput]}
-                    placeholder="Longitude"
-                    value={longitude}
-                    onChangeText={setLongitude}
-                    keyboardType="numeric"
-                  />
-                </View>
-                
-                <TextInput
-                  style={styles.input}
-                  placeholder="Tolerance Radius"
-                  value={toleranceRadius}
-                  onChangeText={setToleranceRadius}
-                  keyboardType="numeric"
-                />
-                
-                <TextInput
-                  style={styles.input}
-                  placeholder="Payment Method ID"
-                  value={paymentMethodId}
-                  onChangeText={setPaymentMethodId}
-                />
-                
-                <View style={{ marginBottom: 12 }}>
-                  <Picker
-                    selectedValue={cardBrand}
-                    onValueChange={(itemValue: string) => setCardBrand(itemValue)}
-                    style={{ backgroundColor: '#F9FAFB', borderRadius: 8 }}
-                  >
-                    <Picker.Item label="Selecciona una marca de tarjeta..." value="" />
-                    <Picker.Item label="Visa" value="Visa" />
-                    <Picker.Item label="Mastercard" value="Mastercard" />
-                    <Picker.Item label="American Express" value="American Express" />
-                    <Picker.Item label="Discover" value="Discover" />
-                    <Picker.Item label="Otra" value="Otra" />
-                  </Picker>
-                </View>
-                
-                {/* Fecha de inicio */}
-                <TouchableOpacity onPress={() => setShowStartDatePicker(true)}>
-                  <TextInput
-                    style={styles.input}
-                    placeholder="Start Date (YYYY-MM-DD)"
-                    value={startDate}
-                    editable={false}
-                    pointerEvents="none"
-                  />
-                </TouchableOpacity>
-                {showStartDatePicker && (
-                  <Modal
-                    visible={showStartDatePicker}
-                    transparent={true}
-                    animationType="slide"
-                    onRequestClose={() => setShowStartDatePicker(false)}
-                  >
-                    <View style={styles.modalOverlay}>
-                      <View style={styles.datePickerModal}>
-                        <View style={styles.datePickerHeader}>
-                          <Text style={styles.datePickerTitle}>Select Start Date</Text>
-                          <TouchableOpacity onPress={() => setShowStartDatePicker(false)}>
-                            <Ionicons name="close" size={24} color="#6B7280" />
-                          </TouchableOpacity>
-                        </View>
-                        <View style={styles.datePickerContent}>
-                          <TextInput
-                            style={styles.dateInput}
-                            placeholder="YYYY-MM-DD"
-                            value={startDate}
-                            onChangeText={(text) => {
-                              // Simple validation for date format
-                              const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
-                              if (text === '' || dateRegex.test(text)) {
-                                setStartDate(text);
-                              }
-                            }}
-                            keyboardType="numeric"
-                            maxLength={10}
-                          />
-                          <Text style={styles.datePickerHint}>Enter date in YYYY-MM-DD format</Text>
-                        </View>
-                        <View style={styles.datePickerButtons}>
-                          <TouchableOpacity
-                            style={styles.cancelButton}
-                            onPress={() => setShowStartDatePicker(false)}
-                          >
-                            <Text style={styles.cancelButtonText}>Cancel</Text>
-                          </TouchableOpacity>
-                          <TouchableOpacity
-                            style={styles.confirmButton}
-                            onPress={() => setShowStartDatePicker(false)}
-                          >
-                            <Text style={styles.confirmButtonText}>Confirm</Text>
-                          </TouchableOpacity>
-                        </View>
-                      </View>
-                    </View>
-                  </Modal>
-                )}
-                {/* Fecha de fin */}
-                <TouchableOpacity onPress={() => setShowEndDatePicker(true)}>
-                  <TextInput
-                    style={styles.input}
-                    placeholder="End Date (YYYY-MM-DD)"
-                    value={endDate}
-                    editable={false}
-                    pointerEvents="none"
-                  />
-                </TouchableOpacity>
-                {showEndDatePicker && (
-                  <Modal
-                    visible={showEndDatePicker}
-                    transparent={true}
-                    animationType="slide"
-                    onRequestClose={() => setShowEndDatePicker(false)}
-                  >
-                    <View style={styles.modalOverlay}>
-                      <View style={styles.datePickerModal}>
-                        <View style={styles.datePickerHeader}>
-                          <Text style={styles.datePickerTitle}>Select End Date</Text>
-                          <TouchableOpacity onPress={() => setShowEndDatePicker(false)}>
-                            <Ionicons name="close" size={24} color="#6B7280" />
-                          </TouchableOpacity>
-                        </View>
-                        <View style={styles.datePickerContent}>
-                          <TextInput
-                            style={styles.dateInput}
-                            placeholder="YYYY-MM-DD"
-                            value={endDate}
-                            onChangeText={(text) => {
-                              // Simple validation for date format
-                              const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
-                              if (text === '' || dateRegex.test(text)) {
-                                setEndDate(text);
-                              }
-                            }}
-                            keyboardType="numeric"
-                            maxLength={10}
-                          />
-                          <Text style={styles.datePickerHint}>Enter date in YYYY-MM-DD format</Text>
-                        </View>
-                        <View style={styles.datePickerButtons}>
-                          <TouchableOpacity
-                            style={styles.cancelButton}
-                            onPress={() => setShowEndDatePicker(false)}
-                          >
-                            <Text style={styles.cancelButtonText}>Cancel</Text>
-                          </TouchableOpacity>
-                          <TouchableOpacity
-                            style={styles.confirmButton}
-                            onPress={() => setShowEndDatePicker(false)}
-                          >
-                            <Text style={styles.confirmButtonText}>Confirm</Text>
-                          </TouchableOpacity>
-                        </View>
-                      </View>
-                    </View>
-                  </Modal>
-                )}
-                {/* Días calculados */}
-                <TextInput
-                  style={[styles.input, { backgroundColor: '#E5E7EB' }]}
-                  placeholder="Duration (days)"
-                  value={duration ? duration.toString() : ''}
-                  editable={false}
-                />
-                
-                {formError && <Text style={styles.errorText}>{formError}</Text>}
-                <TouchableOpacity
-                  style={[styles.submitButton, formLoading && styles.submitButtonDisabled]}
-                  onPress={handleCreate}
-                  disabled={formLoading}
-                >
-                  {formLoading ? (
-                    <ActivityIndicator color="#FFFFFF" />
-                  ) : (
-                    <Text style={styles.submitButtonText}>Create Challenge</Text>
-                  )}
-                </TouchableOpacity>
-                <View style={{ height: 32 }} />
-              </ScrollView>
-            </View>
-          )}
+
 
           {/* Category Results */}
           {selectedCat && (
@@ -1088,26 +663,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '500',
   },
-  formContainer: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    padding: 20,
-    marginBottom: 32,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  formTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#111827',
-    marginBottom: 16,
-  },
-  formScroll: {
-    // maxHeight: 400, // Eliminado para permitir scroll completo
-  },
   input: {
     borderWidth: 1,
     borderColor: '#D1D5DB',
@@ -1117,32 +672,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     backgroundColor: '#F9FAFB',
     marginBottom: 12,
-  },
-  textArea: {
-    height: 80,
-    textAlignVertical: 'top',
-  },
-  row: {
-    flexDirection: 'row',
-    gap: 12,
-  },
-  halfInput: {
-    flex: 1,
-  },
-  submitButton: {
-    backgroundColor: '#000000',
-    borderRadius: 8,
-    paddingVertical: 16,
-    alignItems: 'center',
-    marginTop: 16,
-  },
-  submitButtonDisabled: {
-    opacity: 0.5,
-  },
-  submitButtonText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: '500',
   },
   challengesGrid: {
     gap: 16,
@@ -1260,51 +789,7 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: '#9CA3AF',
   },
-  // Date picker styles
-  datePickerModal: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    width: '90%',
-    maxWidth: 400,
-  },
-  datePickerHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: '#E5E7EB',
-  },
-  datePickerTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#111827',
-    flex: 1,
-  },
-  datePickerContent: {
-    padding: 20,
-  },
-  dateInput: {
-    borderWidth: 1,
-    borderColor: '#D1D5DB',
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 12,
-    fontSize: 16,
-    backgroundColor: '#F9FAFB',
-    marginBottom: 8,
-  },
-  datePickerHint: {
-    fontSize: 12,
-    color: '#6B7280',
-    marginBottom: 16,
-  },
-  datePickerButtons: {
-    flexDirection: 'row',
-    gap: 12,
-    paddingHorizontal: 20,
-    paddingBottom: 20,
-  },
+
 });
 
 export default ChallengesPage; 

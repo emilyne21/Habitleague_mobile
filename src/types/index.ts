@@ -64,6 +64,19 @@ export interface Challenge {
   };
 }
 
+export interface SubmitEvidenceRequest {
+  challengeId: number;
+  imageUrl: string;
+  latitude: number;
+  longitude: number;
+}
+
+export interface DailySubmissionStatus {
+  hasSubmittedToday: boolean;
+  submissionDate?: string;
+  nextSubmissionDate?: string;
+}
+
 export interface ChallengeCreation {
   name: string;
   description: string;

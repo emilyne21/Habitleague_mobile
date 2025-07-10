@@ -1,6 +1,6 @@
 // API Configuration for Mobile
 export const API_CONFIG = {
-  BASE_URL: 'http://10.129.105.163:8080',
+  BASE_URL: 'http://192.168.18.43:8080',
   TIMEOUT: 10000,
   HEADERS: {
     'Content-Type': 'application/json',
@@ -13,7 +13,7 @@ export const API_CONFIG = {
     GET_PROFILE: '/api/user/profile',
     UPDATE_PROFILE: '/api/user/profile',
     CHALLENGES: '/api/challenges',
-    MY_CHALLENGES: '/my-challenges',
+    MY_CHALLENGES: '/api/challenges/my-challenges',
     ACHIEVEMENTS: '/api/achievements',
     MY_ACHIEVEMENTS: '/api/achievements/my-achievements',
     MY_PAYMENTS: '/api/payments/my-payments',

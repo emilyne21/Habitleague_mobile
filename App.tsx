@@ -15,4 +15,4 @@ export default function App() {
   );
 }
 
-export const API_URL = "http://192.168.83.163:8080"; // Cambia el puerto si es necesario
+export const API_URL = "http://192.168.18.43:8080"; // Cambia el puerto si es necesario

@@ -6,7 +6,6 @@ import {
   ScrollView,
   TouchableOpacity,
   Image,
-  Modal,
   SafeAreaView,
   ActivityIndicator,
   Dimensions,
@@ -16,7 +15,7 @@ import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../../context/AuthContext';
 import challengeService from '../../services/challenges';
 import { API_CONFIG } from '../../config/api';
-import type { Challenge, ChallengeParticipant } from '../../types';
+import type { Challenge } from '../../types';
 
 const { width } = Dimensions.get('window');
 
@@ -27,14 +26,6 @@ const DashboardPage: React.FC = () => {
   const [myChallenges, setMyChallenges] = useState<Challenge[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  // Para el modal de participantes
-  const [showParticipantsModal, setShowParticipantsModal] = useState(false);
-  const [selectedChallengeForParticipants, setSelectedChallengeForParticipants] =
-    useState<Challenge | null>(null);
-  const [participants, setParticipants] = useState<ChallengeParticipant[]>([]);
-  const [participantsLoading, setParticipantsLoading] = useState(false);
-  const [participantsError, setParticipantsError] = useState<string | null>(null);
 
   useEffect(() => {
     if (token) {
@@ -144,22 +135,9 @@ const DashboardPage: React.FC = () => {
     }
   };
 
-  const handleViewParticipants = async (challenge: Challenge) => {
-    setSelectedChallengeForParticipants(challenge);
-    setShowParticipantsModal(true);
-    setParticipantsLoading(true);
-    setParticipantsError(null);
-
-    try {
-      const data = await challengeService.getChallengeParticipants(challenge.id.toString());
-      setParticipants(data as ChallengeParticipant[]);
-    } catch (err: any) {
-      setParticipantsError(err.message || 'Error loading participants');
-    } finally {
-      setParticipantsLoading(false);
-    }
+  const handleUploadEvidence = (challenge: Challenge) => {
+    navigation.navigate('SubmitEvidence', { challengeId: challenge.id });
   };
-
 
 
   if (authLoading) {
@@ -246,7 +224,6 @@ const DashboardPage: React.FC = () => {
                 <TouchableOpacity
                   key={challenge.id}
                   style={styles.challengeCard}
-                  onPress={() => handleViewParticipants(challenge)}
                 >
                   <Image
                     source={{ uri: challenge.imageUrl }}
@@ -263,14 +240,12 @@ const DashboardPage: React.FC = () => {
                         {challenge.durationDays} days
                       </Text>
                       <TouchableOpacity
-                        onPress={() => handleViewParticipants(challenge)}
-                        style={styles.participantsButton}
+                        onPress={() => handleUploadEvidence(challenge)}
+                        style={styles.evidenceButton}
                       >
-                        <Text style={styles.participantsText}>
-                          {challenge.participantsCount}{' '}
-                          {challenge.participantsCount === 1
-                            ? 'participant'
-                            : 'participants'}
+                        <Ionicons name="camera" size={16} color="#fff" />
+                        <Text style={styles.evidenceButtonText}>
+                          Subir Evidencia
                         </Text>
                       </TouchableOpacity>
                     </View>
@@ -281,76 +256,6 @@ const DashboardPage: React.FC = () => {
           )}
         </View>
       </ScrollView>
-
-      {/* Modal de participantes */}
-      <Modal
-        visible={showParticipantsModal}
-        animationType="slide"
-        transparent={true}
-        onRequestClose={() => {
-          setShowParticipantsModal(false);
-          setSelectedChallengeForParticipants(null);
-          setParticipants([]);
-        }}
-      >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>
-                Participants: {selectedChallengeForParticipants?.name}
-              </Text>
-              <TouchableOpacity
-                onPress={() => {
-                  setShowParticipantsModal(false);
-                  setSelectedChallengeForParticipants(null);
-                  setParticipants([]);
-                }}
-                style={styles.closeButton}
-              >
-                <Ionicons name="close" size={24} color="#666" />
-              </TouchableOpacity>
-            </View>
-
-            {participantsLoading ? (
-              <View style={styles.centerContainer}>
-                <ActivityIndicator size="large" color="#0000ff" />
-                <Text style={styles.loadingText}>Loading participants...</Text>
-              </View>
-            ) : participantsError ? (
-              <View style={styles.centerContainer}>
-                <Text style={styles.errorText}>{participantsError}</Text>
-              </View>
-            ) : participants.length === 0 ? (
-              <View style={styles.centerContainer}>
-                <Text style={styles.emptyText}>No participants yet.</Text>
-              </View>
-            ) : (
-              <ScrollView style={styles.participantsList}>
-                {participants.map((participant, index) => (
-                  <View
-                    key={participant.id || index}
-                    style={styles.participantCard}
-                  >
-                    <View style={styles.participantInfo}>
-                      <Text style={styles.participantName}>
-                        {participant.firstName} {participant.lastName}
-                      </Text>
-                      <Text style={styles.participantEmail}>
-                        {participant.email}
-                      </Text>
-                      {participant.joinedAt && (
-                        <Text style={styles.participantJoined}>
-                          Joined: {new Date(participant.joinedAt).toLocaleDateString()}
-                        </Text>
-                      )}
-                    </View>
-                  </View>
-                ))}
-              </ScrollView>
-            )}
-          </View>
-        </View>
-      </Modal>
     </SafeAreaView>
   );
 };
@@ -465,71 +370,19 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#9ca3af',
   },
-  participantsButton: {
-    paddingVertical: 4,
-    paddingHorizontal: 8,
-  },
-  participantsText: {
-    fontSize: 12,
-    color: '#3b82f6',
-    fontWeight: '500',
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-  },
-  modalContent: {
-    backgroundColor: '#fff',
-    borderRadius: 16,
-    width: '100%',
-    maxWidth: 400,
-    maxHeight: '80%',
-    padding: 20,
-  },
-  modalHeader: {
+  evidenceButton: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 20,
-  },
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#1f2937',
-    flex: 1,
-  },
-  closeButton: {
-    padding: 4,
-  },
-  participantsList: {
-    flex: 1,
-  },
-  participantCard: {
-    backgroundColor: '#f9fafb',
-    padding: 16,
+    backgroundColor: '#059669',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
     borderRadius: 8,
-    marginBottom: 8,
+    gap: 4,
   },
-  participantInfo: {
-    flex: 1,
-  },
-  participantName: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: '#1f2937',
-    marginBottom: 2,
-  },
-  participantEmail: {
+  evidenceButtonText: {
     fontSize: 12,
-    color: '#6b7280',
-    marginBottom: 2,
-  },
-  participantJoined: {
-    fontSize: 10,
-    color: '#9ca3af',
+    color: '#fff',
+    fontWeight: '500',
   },
   sectionHeader: {
     flexDirection: 'row',

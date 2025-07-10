@@ -12,10 +12,12 @@ import ProfileSetupPage from '../components/pages/ProfileSetupPage';
 // Main Screens
 import DashboardPage from '../components/pages/DashboardPage';
 import ChallengesPage from '../components/pages/ChallengesPage';
+import CreateChallengePage from '../components/pages/CreateChallengePage';
 import ProfilePage from '../components/pages/ProfilePage';
 import EditProfilePage from '../components/pages/EditProfilePage';
 import ChallengeDetailsPage from '../components/pages/ChallengeDetailsPage';
 import ChallengeProofPage from '../components/pages/ChallengeProofPage';
+import SubmitEvidencePage from '../components/pages/SubmitEvidencePage';
 import PaymentsPage from '../components/pages/PaymentsPage';
 import PaymentForm from '../components/payments/PaymentForm';
 import PaymentStatus from '../components/payments/PaymentStatus';
@@ -97,8 +99,10 @@ const AppNavigator = () => {
         ) : (
           <>
             <Stack.Screen name="Main" component={MainTabs} />
+            <Stack.Screen name="CreateChallenge" component={CreateChallengePage} />
             <Stack.Screen name="EditProfile" component={EditProfilePage} />
             <Stack.Screen name="ChallengeDetails" component={ChallengeDetailsPage} />
+            <Stack.Screen name="SubmitEvidence" component={SubmitEvidencePage} />
             <Stack.Screen name="ChallengeProof" component={ChallengeProofPage} />
             <Stack.Screen name="PaymentStatus" component={PaymentStatus} />
           </>
